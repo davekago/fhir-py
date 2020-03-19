@@ -125,11 +125,9 @@ class SyncClient(AbstractClient, ABC):
                     id = paths[1].split('/')[0]
                 last_updated = r.headers.get('Last-Modified')
                 if last_updated is not None:
-                    last_updated = datetime.strptime(last_updated, "%a, %d %b %Y %H:%M:%S %Z")
-                        .strftime('%Y-%m-%d %H:%M:%S.%fZ')
+                    last_updated = datetime.strptime(last_updated, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S.%fZ')
 
-                content = '{"id": "{}", "meta": {"version": 1, "lastUpdated": "{}"}}'
-                    .format(id, last_updated)
+                content = '{"id": "{}", "meta": {"version": 1, "lastUpdated": "{}"}}'.format(id, last_updated)
 
                 return json.loads(content, object_hook=AttrDict)
             # return json.loads(
