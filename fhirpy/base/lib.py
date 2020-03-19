@@ -127,11 +127,9 @@ class SyncClient(AbstractClient, ABC):
                 if last_updated is not None:
                     last_updated = datetime.strptime(last_updated, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S.%fZ')
 
-                print(id)
-                print(last_updated)
                 content = '{"id": "{}", "meta": {"version": 1, "lastUpdated": "{}"}}'.format(id, last_updated)
 
-                return json.loads(content, object_hook=AttrDict)
+                return json.loads(content)
             # return json.loads(
             #     r.content.decode(), object_hook=AttrDict
             # )if r.content else json.loads(
