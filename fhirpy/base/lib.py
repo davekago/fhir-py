@@ -284,8 +284,9 @@ class SyncResource(BaseResource, ABC):
             data=self.serialize()
         )
 
-        self['meta'] = data.get('meta', {})
-        self['id'] = data.get('id')
+        if data is not None:
+            self['meta'] = data.get('meta', {})
+            self['id'] = data.get('id')
 
     def delete(self):
         return self.client._do_request('delete', self._get_path())
