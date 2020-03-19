@@ -118,6 +118,9 @@ class SyncClient(AbstractClient, ABC):
             if r.content:
                 return json.loads(r.content.decode(), object_hook=AttrDict)
             else:
+                if data is None:
+                    return None
+
                 location = r.headers.get('Location', '')
                 paths = location.split('{}/'.format(data.get('resourceType', 'Unk')), 1)
                 id = 'unknown'
