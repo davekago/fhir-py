@@ -114,7 +114,8 @@ class SyncClient(AbstractClient, ABC):
         r = requests.request(method, url, json=data, headers=headers)
 
         if 200 <= r.status_code < 300:
-            print(r)
+            print(r.headers)
+            print(r.text)
             return json.loads(
                 r.content.decode(), object_hook=AttrDict
             ) if r.content else None
