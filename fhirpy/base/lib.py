@@ -2,6 +2,7 @@ import json
 import copy
 import warnings
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 import aiohttp
 import requests
@@ -114,11 +115,30 @@ class SyncClient(AbstractClient, ABC):
         r = requests.request(method, url, json=data, headers=headers)
 
         if 200 <= r.status_code < 300:
-            print(r.headers)
-            print(r.text)
-            return json.loads(
-                r.content.decode(), object_hook=AttrDict
-            ) if r.content else None
+            if r.content:
+                return json.loads(r.content.decode(), object_hook=AttrDict)
+            else:
+                location = r.headers.get('Location', '')
+                paths = location.split('{}/'.format(data.get('resourceType', 'Unk')), 1)
+                id = 'unknown'
+                if len(paths) > 1:
+                    id = paths[1].split('/')[0]
+                last_updated = r.headers.get('Last-Modified')
+                if last_updated is not None:
+                    last_updated = datetime.strptime(last_updated, "%a, %d %b %Y %H:%M:%S %Z")
+                        .strftime('%Y-%m-%d %H:%M:%S.%fZ')
+
+                content = '{"id": "{}", "meta": {"version": 1, "lastUpdated": "{}"}}'
+                    .format(id, last_updated)
+
+                return json.loads(content, object_hook=AttrDict)
+            # return json.loads(
+            #     r.content.decode(), object_hook=AttrDict
+            # )if r.content else json.loads(
+            #     '{"id": "{}", "meta": {"versionId": 1, "lastUpdated": "{}"}}'
+            #         .format(r.headers.get('Location'), r.headers.get('Last-Modified')), 
+            #     object_hook=AttrDict
+            # )
 
         if r.status_code == 404 or r.status_code == 410:
             raise ResourceNotFound(r.content.decode())
