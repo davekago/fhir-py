@@ -118,8 +118,6 @@ class SyncClient(AbstractClient, ABC):
             if r.content:
                 return json.loads(r.content.decode(), object_hook=AttrDict)
             else:
-                print(method);
-                print(r.status_code);
                 if data is None:
                     return None
 
@@ -135,7 +133,6 @@ class SyncClient(AbstractClient, ABC):
                 return {
                     'id': id,
                     'meta': {
-                        'version': 1,
                         'lastUpdated': last_updated
                     }
                 }
