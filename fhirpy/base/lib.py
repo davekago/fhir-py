@@ -118,6 +118,8 @@ class SyncClient(AbstractClient, ABC):
             if r.content:
                 return json.loads(r.content.decode(), object_hook=AttrDict)
             else:
+                print(method);
+                print(r.status_code);
                 if data is None:
                     return None
 
@@ -137,13 +139,6 @@ class SyncClient(AbstractClient, ABC):
                         'lastUpdated': last_updated
                     }
                 }
-            # return json.loads(
-            #     r.content.decode(), object_hook=AttrDict
-            # )if r.content else json.loads(
-            #     '{"id": "{}", "meta": {"versionId": 1, "lastUpdated": "{}"}}'
-            #         .format(r.headers.get('Location'), r.headers.get('Last-Modified')), 
-            #     object_hook=AttrDict
-            # )
 
         if r.status_code == 404 or r.status_code == 410:
             raise ResourceNotFound(r.content.decode())
