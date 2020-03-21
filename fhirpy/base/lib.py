@@ -121,6 +121,8 @@ class SyncClient(AbstractClient, ABC):
                 if data is None:
                     return None
 
+                print(r.headers);
+                print(data);
                 location = r.headers.get('Location', '')
                 paths = location.split('{}/'.format(data.get('resourceType', 'Unk')), 1)
                 id = 'unknown'
@@ -133,6 +135,7 @@ class SyncClient(AbstractClient, ABC):
                 return {
                     'id': id,
                     'meta': {
+                        'version': 1,
                         'lastUpdated': last_updated
                     }
                 }
