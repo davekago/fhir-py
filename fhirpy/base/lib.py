@@ -121,13 +121,14 @@ class SyncClient(AbstractClient, ABC):
                 if data is None:
                     return None
 
-                print(r.headers);
-                print(data);
                 location = r.headers.get('Location', '')
                 paths = location.split('{}/'.format(data.get('resourceType', 'Unk')), 1)
                 id = 'unknown'
+                version = 1
                 if len(paths) > 1:
-                    id = paths[1].split('/')[0]
+                    array = paths[1].split('/')
+                    id = array[0]
+                    version = array[-1]
                 last_updated = r.headers.get('Last-Modified')
                 if last_updated is not None:
                     last_updated = datetime.strptime(last_updated, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S.%fZ')
@@ -135,7 +136,7 @@ class SyncClient(AbstractClient, ABC):
                 return {
                     'id': id,
                     'meta': {
-                        'version': 1,
+                        'version': version,
                         'lastUpdated': last_updated
                     }
                 }
